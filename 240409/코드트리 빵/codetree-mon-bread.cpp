@@ -11,6 +11,12 @@ typedef struct {
 	int y, x;
 } Location;
 
+typedef struct {
+	int dist;
+	int dir;
+	int y, x;
+} Info;
+
 int n, m;
 int t = 0;
 int cnt_onboard = 0;
@@ -90,30 +96,34 @@ void moveto_store(void) {
 		// 편의점에 도착한 사람이 아니라면
 		// i번 편의점까지 가장 가까워지는 방향(위치) 찾고
 		// 좌표 이동
-		
+
 		Location person = man[i];
 		Location goal = store[i];
-		
+
 		// 이미 편의점에 도착한 사람이 아니라면
 		if (!(person.y == goal.y && person.x == goal.x)) {
-			
-			queue<vector<pair<int, Location>>> q;
-			
-			// 시작 탐색좌표 큐에 집어넣기
-			for (int i = 0; i < 4; i++) {
-				// (탐색방향, 위치)
-				vector<pair<int, Location>> v;
 
-				int ny = person.y + dy[i];
-				int nx = person.x + dx[i];
+			queue<vector<Info>> q;
+
+			// 시작 탐색좌표 큐에 집어넣기
+			for (int j = 0; j < 4; j++) {
+				// (탐색방향, 위치)
+				vector<Info> v(2);
+
+				int ny = person.y + dy[j];
+				int nx = person.x + dx[j];
 
 				// inbound and able to move to
 				if (1 <= ny && ny <= n && 1 <= nx && nx <= n) {
 					if (board[ny][nx] == 0 || board[ny][nx] == 1) {
-						Location next;
-						next.y = ny;
-						next.x = nx;
-						v.push_back(make_pair(i, next));
+						v[0].dir = j;
+						v[0].dist = 1;
+						v[0].y = ny;
+						v[0].x = nx;
+						v[1].dir = j;
+						v[1].dist = 1;
+						v[1].y = ny;
+						v[1].x = nx;
 						q.push(v);
 					}
 				}
@@ -121,34 +131,36 @@ void moveto_store(void) {
 
 			int mindist = 300;
 			vector<int> nextdir;
-			
+
 			while (!q.empty()) {
-				vector<pair<int, Location>> vpil = q.front();
+				vector<Info> vi = q.front();
 				q.pop();
 
 				// store found
-				int size = vpil.size();
-				Location curr = vpil[size - 1].second;
+				int size = vi[1].dist;
+				Info curr = vi[1];
 				if (curr.y == goal.y && curr.x == goal.x) {
 					if (mindist >= size) {
 						mindist = size;
-						nextdir.push_back(vpil[0].first);
+						nextdir.push_back(vi[0].dir);
 					}
 				}
 
-				for (int i = 0; i < 4; i++) {
-					int ny = curr.y + dy[i];
-					int nx = curr.x + dx[i];
+				for (int j = 0; j < 4; j++) {
+					int ny = curr.y + dy[j];
+					int nx = curr.x + dx[j];
 
 					// inbound and able to move to
 					if (1 <= ny && ny <= n && 1 <= nx && nx <= n) {
 						if (board[ny][nx] == 0 || board[ny][nx] == 1) {
 							if (mindist >= size) {
-								Location next;
-								next.y = ny;
-								next.x = nx;
-								vpil.push_back(make_pair(i, next));
-								q.push(vpil);
+								vector<Info> newvi;
+								newvi = vi;
+								newvi[1].dir = j;
+								newvi[1].dist = vi[1].dist + 1;
+								newvi[1].y = ny;
+								newvi[1].x = nx;
+								q.push(newvi);
 							}
 						}
 					}
