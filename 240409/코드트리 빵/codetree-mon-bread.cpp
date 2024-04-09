@@ -105,28 +105,23 @@ void moveto_store(void) {
 		// 이미 편의점에 도착한 사람이 아니라면
 		if (!(person.y == goal.y && person.x == goal.x)) {
 
-			queue<vector<Info>> q;
+			queue<Info> q;
 
 			// 시작 탐색좌표 큐에 집어넣기
 			for (int j = 0; j < 4; j++) {
-				// (탐색방향, 위치)
-				vector<Info> v(2);
 
 				int ny = person.y + dy[j];
 				int nx = person.x + dx[j];
 
+				Info info;
 				// inbound and able to move to
 				if (0 <= ny && ny < n && 0 <= nx && nx < n) {
 					if (board[ny][nx] == 0 || board[ny][nx] == 1) {
-						v[0].dir = j;
-						v[0].dist = 1;
-						v[0].y = ny;
-						v[0].x = nx;
-						v[1].dir = j;
-						v[1].dist = 1;
-						v[1].y = ny;
-						v[1].x = nx;
-						q.push(v);
+						info.dist = 1;
+						info.dir = j;
+						info.y = ny;
+						info.x = nx;
+						q.push(info);
 					}
 				}
 			}
@@ -136,19 +131,17 @@ void moveto_store(void) {
 
 			while (!q.empty()) {
 
-				vector<Info> vi = q.front();
+				Info curr = q.front();
 				q.pop();
 
 				// store found
-				int size = vi[1].dist;
+				int size = curr.dist;
 				if(mindist < size) continue;
 
-
-				Info curr = vi[1];
 				if (curr.y == goal.y && curr.x == goal.x) {
 					if (mindist >= size) {
 						mindist = size;
-						nextdir.push_back(vi[0].dir);
+						nextdir.push_back(curr.dir);
 					}
 				}
 
@@ -159,13 +152,12 @@ void moveto_store(void) {
 					// inbound and able to move to
 					if (0 <= ny && ny < n && 0 <= nx && nx < n) {
 						if (board[ny][nx] == 0 || board[ny][nx] == 1) {
-							vector<Info> newvi;
-							newvi = vi;
-							newvi[1].dir = j;
-							newvi[1].dist = vi[1].dist + 1;
-							newvi[1].y = ny;
-							newvi[1].x = nx;
-							q.push(newvi);
+							Info newinfo;
+							newinfo.dist = curr.dist + 1;
+							newinfo.dir = curr.dir;
+							newinfo.y = ny;
+							newinfo.x = nx;;
+							q.push(newinfo);
 						}
 					}
 				}
