@@ -141,7 +141,7 @@ void moveto_store(void) {
 
 				// store found
 				int size = vi[1].dist;
-				//if(mindist < size) continue;
+				if(mindist < size) continue;
 
 
 				Info curr = vi[1];
@@ -159,15 +159,13 @@ void moveto_store(void) {
 					// inbound and able to move to
 					if (0 <= ny && ny < n && 0 <= nx && nx < n) {
 						if (board[ny][nx] == 0 || board[ny][nx] == 1) {
-							if (mindist >= size) {
-								vector<Info> newvi;
-								newvi = vi;
-								newvi[1].dir = j;
-								newvi[1].dist = vi[1].dist + 1;
-								newvi[1].y = ny;
-								newvi[1].x = nx;
-								q.push(newvi);
-							}
+							vector<Info> newvi;
+							newvi = vi;
+							newvi[1].dir = j;
+							newvi[1].dist = vi[1].dist + 1;
+							newvi[1].y = ny;
+							newvi[1].x = nx;
+							q.push(newvi);
 						}
 					}
 				}
@@ -210,9 +208,12 @@ void moveto_basecamp(int idx) {
 
 	int mindist = 300;
 
+	pair<Location, int> curr;
 	while (!q.empty()) {
-		pair<Location, int> curr = q.front();
+		curr = q.front();
 		q.pop();
+
+		if (curr.second > mindist) continue;
 
 		// nearest basecamp found
 		if (board[curr.first.y][curr.first.x] == 1) {
@@ -229,12 +230,10 @@ void moveto_basecamp(int idx) {
 			// inbound and able to move to
 			if (0 <= ny && ny < n && 0 <= nx && nx < n) {
 				if (board[ny][nx] == 0 || board[ny][nx] == 1) {
-					if (curr.second <= mindist) {
-						Location next;
-						next.y = ny;
-						next.x = nx;
-						q.push(make_pair(next, curr.second + 1));
-					}
+					Location next;
+					next.y = ny;
+					next.x = nx;
+					q.push(make_pair(next, curr.second + 1));
 				}
 			}
 		}
