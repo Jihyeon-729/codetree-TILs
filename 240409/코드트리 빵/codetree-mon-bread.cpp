@@ -22,10 +22,10 @@ int t = 0;
 int cnt_onboard = 0;
 int cnt_arrived = 0;
 
-int board[16][16];
-Location store[31];
-Location man[31];
-bool arrived[31] = { 0, };
+int board[15][15];
+Location store[30];
+Location man[30];
+bool arrived[30] = { 0, };
 
 int dy[4] = { -1, 0, 0, 1 };
 int dx[4] = { 0, -1, 1, 0 };
@@ -37,8 +37,8 @@ void check_arrival(void);
 
 void print_board(void)
 {
-	for (int i = 1; i <= n; i++) {
-		for (int j = 1; j <= n; j++) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
 			cout << board[i][j] << " ";
 		} cout << "\n";
 	} cout << "\n";
@@ -46,7 +46,7 @@ void print_board(void)
 
 void print_man(void)
 {
-	for (int i = 1; i <= cnt_onboard; i++) {
+	for (int i = 0; i < cnt_onboard; i++) {
 		cout << "man #" << i << " at (" << man[i].y << "," << man[i].x << "), ";
 		cout << "store #" << i << " at (" << store[i].y << "," << store[i].x << ")\n";
 	} cout << "\n";
@@ -64,10 +64,10 @@ int main(void)
 			moveto_store();
 			check_arrival();
 		}
-		if(t<=m) moveto_basecamp(t);
+		if (t <= m) moveto_basecamp(t-1);
 
-		/*print_board();
-		print_man();*/
+		//print_board();
+		//print_man();
 
 		if (cnt_arrived == m) break;
 	}
@@ -78,15 +78,17 @@ int main(void)
 
 void input(void) {
 	cin >> n >> m;
-	
-	for (int i = 1; i <= n; i++) {
-		for (int j = 1; j <= n; j++) {
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
 			cin >> board[i][j];
 		}
 	}
 
-	for (int i = 1; i <= m; i++) {
+	for (int i = 0; i < m; i++) {
 		cin >> store[i].y >> store[i].x;
+		store[i].y--;
+		store[i].x--;
 	}
 }
 
@@ -114,7 +116,7 @@ void moveto_store(void) {
 				int nx = person.x + dx[j];
 
 				// inbound and able to move to
-				if (1 <= ny && ny <= n && 1 <= nx && nx <= n) {
+				if (0 <= ny && ny < n && 0 <= nx && nx < n) {
 					if (board[ny][nx] == 0 || board[ny][nx] == 1) {
 						v[0].dir = j;
 						v[0].dist = 1;
@@ -133,11 +135,15 @@ void moveto_store(void) {
 			vector<int> nextdir;
 
 			while (!q.empty()) {
+
 				vector<Info> vi = q.front();
 				q.pop();
 
 				// store found
 				int size = vi[1].dist;
+				//if(mindist < size) continue;
+
+
 				Info curr = vi[1];
 				if (curr.y == goal.y && curr.x == goal.x) {
 					if (mindist >= size) {
@@ -151,7 +157,7 @@ void moveto_store(void) {
 					int nx = curr.x + dx[j];
 
 					// inbound and able to move to
-					if (1 <= ny && ny <= n && 1 <= nx && nx <= n) {
+					if (0 <= ny && ny < n && 0 <= nx && nx < n) {
 						if (board[ny][nx] == 0 || board[ny][nx] == 1) {
 							if (mindist >= size) {
 								vector<Info> newvi;
@@ -193,7 +199,7 @@ void check_arrival(void) {
 }
 
 void moveto_basecamp(int idx) {
-	
+
 	cnt_onboard++;
 
 	queue<pair<Location, int>> q;
@@ -207,7 +213,7 @@ void moveto_basecamp(int idx) {
 	while (!q.empty()) {
 		pair<Location, int> curr = q.front();
 		q.pop();
-		
+
 		// nearest basecamp found
 		if (board[curr.first.y][curr.first.x] == 1) {
 			if (mindist >= curr.second) {
@@ -221,7 +227,7 @@ void moveto_basecamp(int idx) {
 			int nx = curr.first.x + dx[i];
 
 			// inbound and able to move to
-			if (1 <= ny && ny <= n && 1 <= nx && nx <= n) {
+			if (0 <= ny && ny < n && 0 <= nx && nx < n) {
 				if (board[ny][nx] == 0 || board[ny][nx] == 1) {
 					if (curr.second <= mindist) {
 						Location next;
@@ -236,8 +242,10 @@ void moveto_basecamp(int idx) {
 
 	int y = nearest[0].y;
 	int x = nearest[0].x;
+	//cout << "(" << y << "," << x << "), ";
 
 	for (int i = 1; i < nearest.size(); i++) {
+		//cout << "(" << nearest[i].y << "," << nearest[i].x << "), ";
 		if (y == nearest[i].y) {
 			if (x > nearest[i].x) {
 				x = nearest[i].x;
@@ -253,6 +261,8 @@ void moveto_basecamp(int idx) {
 
 	man[idx].y = y;
 	man[idx].x = x;
+	
+	//cout << "Final: (" << y << "," << x << ")\n";
 
 	board[y][x] = 2;
 	return;
