@@ -93,7 +93,7 @@ void input(void) {
 }
 
 void moveto_store(void) {
-	for (int i = 1; i <= cnt_onboard; i++) {
+	for (int i = 0; i < cnt_onboard; i++) {
 		// 격자에 있는 i번 사람
 		// 편의점에 도착한 사람이 아니라면
 		// i번 편의점까지 가장 가까워지는 방향(위치) 찾고
