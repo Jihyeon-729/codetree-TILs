@@ -185,7 +185,7 @@ void moveto_store(void) {
 }
 
 void check_arrival(void) {
-	for (int i = 1; i <= cnt_onboard; i++) {
+	for (int i = 0; i < cnt_onboard; i++) {
 		Location person = man[i];
 		Location goal = store[i];
 
