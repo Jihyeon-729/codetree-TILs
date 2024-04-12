@@ -139,7 +139,18 @@ void run(void) {
 			int nx = runner[i].x + dx[runner[i].curd];
 
 			if (ny<1 || ny>n || nx<1 || nx>n) {
-				runner[i].curd = (runner[i].curd + 1) % 2;
+				if (runner[i].curd == 0) {
+					runner[i].curd = 1;
+				}
+				else if (runner[i].curd == 1) {
+					runner[i].curd = 0;
+				}
+				else if (runner[i].curd == 2) {
+					runner[i].curd = 3;
+				}
+				else if (runner[i].curd == 3) {
+					runner[i].curd = 2;
+				}
 				ny = runner[i].y + dy[runner[i].curd];
 				nx = runner[i].x + dx[runner[i].curd];
 			}
@@ -165,12 +176,13 @@ void chase(void) {
 
 	int y, x, cd;
 
-	cd = chaser.curd;/*
-	if (chaser.d == -1) {
-		cd = rdir[chaser.y][chaser.x];
-	} else if (chaser.d == 1) {
-		cd = dir[chaser.y][chaser.x];
-	}*/
+	cd = chaser.curd;
+
+	//if (chaser.d == -1) {
+	//	cd = rdir[chaser.y][chaser.x];
+	//} else if (chaser.d == 1) {
+	//	cd = dir[chaser.y][chaser.x];
+	//}
 
 	//cout << "Chaser moved (" << chaser.y << "," << chaser.x << ") -> ";
 
@@ -193,24 +205,24 @@ void chase(void) {
 }
 
 void catchh(void) {
-	int len;
-	if (chaser.curd == 0) {
-		len = chaser.x;
-	}
-	else if (chaser.curd == 1) {
-		len = n - chaser.x + 1;
-	}
-	else if (chaser.curd == 2) {
-		len = chaser.y;
-	}
-	else if (chaser.curd == 3) {
-		len = n - chaser.y + 1;
-	}
+	//int len;
+	//if (chaser.curd == 0) {
+	//	len = chaser.x;
+	//}
+	//else if (chaser.curd == 1) {
+	//	len = n - chaser.x + 1;
+	//}
+	//else if (chaser.curd == 2) {
+	//	len = chaser.y;
+	//}
+	//else if (chaser.curd == 3) {
+	//	len = n - chaser.y + 1;
+	//}
 
 	int count = 0;
 
 	int cy, cx;
-	for (int i = 0; i < len; i++) {
+	for (int i = 0; i < 3; i++) {
 		cy = chaser.y + i * dy[chaser.curd];
 		cx = chaser.x + i * dx[chaser.curd];
 		
@@ -234,5 +246,5 @@ void catchh(void) {
 }
 
 int get_dist(int fy, int fx, int ty, int tx) {
-	return abs(fy - fx) + abs(ty - tx);
+	return abs(fy - ty) + abs(fx - tx);
 }
