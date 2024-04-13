@@ -56,7 +56,7 @@ int main(void)
 		answer += score(fth, 1, visited);
 		
 		changedir();
-		print_board();
+		//print_board();
 
 		//cout << "answer : " << answer << "\n";
 	}
