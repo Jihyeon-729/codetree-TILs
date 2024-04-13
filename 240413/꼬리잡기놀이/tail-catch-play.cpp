@@ -44,10 +44,13 @@ int main(void)
 
 	input();
 	for (rnd = 0; rnd < k; rnd++) {
+		//cout << "--------Round #" << rnd << "--------\n";
 		move();
 		//print_board();
 		Location fth = throwball();
 		//cout << "Crash at (" << fth.y << "," << fth.x << ")\n";
+
+		if (fth.y == -1 && fth.x == -1) continue;
 
 		vector<vector<bool>> visited(20, vector<bool>(20, 0));
 		answer += score(fth, 1, visited);
@@ -149,6 +152,11 @@ Location throwball(void) {
 			}
 		}
 	}
+
+	Location l;
+	l.y = -1;
+	l.x = -1;
+	return l;
 }
 
 int score(Location cur, int depth, vector<vector<bool>> &visited) {
@@ -158,7 +166,7 @@ int score(Location cur, int depth, vector<vector<bool>> &visited) {
 
 	if (board[cur.y][cur.x] == 1) {
 		hd = cur;
-		return (depth * depth);
+		sc = (depth * depth);
 	}
 
 	if (board[cur.y][cur.x] == 3) {
@@ -176,11 +184,6 @@ int score(Location cur, int depth, vector<vector<bool>> &visited) {
 		if (visited[nxt.y][nxt.x]) continue;
 		if (board[nxt.y][nxt.x] == 0) continue;
 		if (board[nxt.y][nxt.x] == 4) continue;
-		if (board[nxt.y][nxt.x] == 3) {
-			tl = nxt;
-			cout << "Tail (" << tl.y << "," << tl.x << ")\n";
-			continue;
-		}
 
 		int ret = score(nxt, depth + 1, visited);
 		if (ret != 0) {
