@@ -56,7 +56,7 @@ int main(void)
 		answer += score(fth, 1, visited);
 		
 		changedir();
-		//print_board();
+		print_board();
 
 		//cout << "answer : " << answer << "\n";
 	}
@@ -88,11 +88,24 @@ void input(void) {
 void move(void) {
 	for (int i = 0; i < head.size(); i++) {
 		Location h = head[i];
+		bool tail_next = false;
 		for (int j = 0; j < 4; j++) {
 			Location n;
 			n.y = h.y + dy[j];
 			n.x = h.x + dx[j];
-			if (board[n.y][n.x] == 4) {
+			if (board[n.y][n.x] == 3) {
+				tail_next = true;
+			}
+		}
+		for (int j = 0; j < 4; j++) {
+			Location n;
+			n.y = h.y + dy[j];
+			n.x = h.x + dx[j];
+			if (!tail_next && board[n.y][n.x] == 4) {
+				forward(h, n);
+				head[i] = n;
+			}
+			else if (tail_next && board[n.y][n.x] == 3) {
 				forward(h, n);
 				head[i] = n;
 			}
@@ -220,6 +233,10 @@ void forward(Location cur, Location frt) {
 		if (board[bhd.y][bhd.x] == 0) continue;
 		if (board[bhd.y][bhd.x] == 4) {
 			board[cur.y][cur.x] = 4;
+			return;
+		}
+		if (board[bhd.y][bhd.x] == 1) {
+			board[cur.y][cur.x] = 3;
 			return;
 		}
 		
